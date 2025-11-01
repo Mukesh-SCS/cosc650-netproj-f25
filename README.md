@@ -49,13 +49,13 @@ Open two terminals:
 - Terminal 1 – Server:
 
 ```bash
-java -cp src Groupnameserver
+java -cp src tripathiserver
 ```
 
 - Terminal 2 – Client:
 
 ```bash
-java -cp src Groupnameclient
+java -cp src tripathiclient
 ```
 
 ### Sample Interaction
