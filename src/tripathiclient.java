@@ -14,6 +14,7 @@
  *
  ***********************************************************************************************/
 import java.net.*;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
@@ -73,6 +74,55 @@ public class tripathiclient {
             // 8. When all data received:
             //       send "ACK" packet to server
             //       print "All data received successfully."
+            
+         // ========================= PSEUDOCODE IMPLEMENTATION by Mayeesha=========================
+            // (4) Receive initial packet containing N (total bytes) 
+            byte[] sizeBuf = new byte[64]; // enough for ASCII length like "123456"
+            DatagramPacket sizePacket = new DatagramPacket(sizeBuf, sizeBuf.length);
+
+            clientSocket.receive(sizePacket); // may throw SocketTimeoutException
+            // Use the address/port we actually heard from (more robust than hardcoding)
+            InetAddress respAddr = sizePacket.getAddress();
+            int respPort = sizePacket.getPort();
+
+            String sizeStr = new String(sizePacket.getData(), 0, sizePacket.getLength(),
+                                        StandardCharsets.UTF_8).trim();
+            int totalBytes = Integer.parseInt(sizeStr); //N
+
+            // (5) Allocate a buffer to hold the whole content-------
+            ByteArrayOutputStream content = new ByteArrayOutputStream(totalBytes);
+
+            // (6) Initialize counter 
+            int totalReceived = 0;
+
+            // (7) Receive webpage chunks until totalReceived == N 
+            while (totalReceived < totalBytes) {
+                try {
+                    byte[] buf = new byte[PACKET_SIZE];
+                    DatagramPacket pkt = new DatagramPacket(buf, buf.length);
+                    clientSocket.receive(pkt); // times out after 'timeout' ms
+
+                    int len = pkt.getLength();
+                    content.write(buf, 0, len);
+                    totalReceived += len;
+
+                    // Print chunk as text (as bytes arrive), matching the spec
+                    System.out.print(new String(buf, 0, len, StandardCharsets.UTF_8));
+                    System.out.flush();
+                } catch (SocketTimeoutException te) {
+                    // Timeout while waiting for data: print FAIL and exit (no ACK sent)
+                    System.out.println("\nFAIL");
+                    return;
+                }
+            }
+
+            // (8) All data received: send "ACK" back to the server 
+            byte[] ack = "ACK".getBytes(StandardCharsets.UTF_8);
+            DatagramPacket ackPkt =
+                new DatagramPacket(ack, ack.length, respAddr, respPort);
+            clientSocket.send(ackPkt);
+
+            System.out.println("\nAll data received successfully.");
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
