@@ -17,6 +17,7 @@
 import java.io.*;
 import java.net.*;
 
+// Implementated by Leon Dhoska
 public class tripathiserver 
 {
 
@@ -47,17 +48,35 @@ public class tripathiserver
                 Thread worker = new Thread(() -> 
                 {
                     try {
-                        // --- PSEUDOCODE SECTION ---
-
+                        // Create a new socket for this client thread
+                        DatagramSocket threadSocket = new DatagramSocket();
+                        
                         // 1. Parse request string: "T WS"
-                        //    Split request by space into timeout (int) and website (String).
+                        String[] parts = request.split(" ", 2);
+                        int timeout = Integer.parseInt(parts[0]);
+                        String website = parts[1];
 
                         // 2. Build HTTPS URL string: "https://" + website
-                        //    Open an HttpsURLConnection to the URL.
+                        String urlString = "https://" + website;
+                        URI uri = new URI(urlString);
+                        URL url = uri.toURL();
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
 
-                        // 3. Read all bytes of the webpage into a byte array (content[]).
+                        // 3. Read all bytes of the webpage into a byte array (content[])
+                        InputStream inputStream = connection.getInputStream();
+                        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                        byte[] chunk = new byte[PACKET_SIZE];
+                        int bytesRead;
+                        while ((bytesRead = inputStream.read(chunk)) != -1) {
+                            byteStream.write(chunk, 0, bytesRead);
+                        }
+                        inputStream.close();
+                        byte[] content = byteStream.toByteArray();
 
-                        // 4. Get number of bytes (N = content.length).
+                        // 4. Get number of bytes (N = content.length)
+                        int N = content.length;
 
                         // 5. Send N to client as a UDP packet.
 
