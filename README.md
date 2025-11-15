@@ -12,7 +12,6 @@ The project includes two main parts:
 2. **ICMPv6 Analysis (Wireshark)**  
    - Analysis of the ICMPv6 section of frame 8 from the provided capture file (`c650projectf25wscap.pcapng`).
    - Explanation of the key fields and their meanings in a separate report.
-   - submit by tripathians.pdf
 
 
 ## Repository Structure
@@ -85,7 +84,7 @@ or, if timeout occurs:
 
 #### ICMPv6 Analysis (Question 1)
 
-- The file analysis/tripathians.md contains a three-column table describing ICMPv6 header fields from frame 8 in the provided capture:
+- The file analysis/Groupnameans_draft.md contains a three-column table describing ICMPv6 header fields from frame 8 in the provided capture:
 
 - Field/Subfield	Actual Value	Meaning
 Type	128	Echo Request (used for ping)
@@ -102,7 +101,7 @@ Sequence Number	0x0001	Incremented for each echo request
 #Confirm both compile and run with no extra dependencies. 
 ###  Submit only:  ###
 
-tripathians.pdf
+tripathi.pdf
 
 tripathiserver.java
 

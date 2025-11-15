@@ -13,12 +13,11 @@
  *  AUTHOR:  Leon Dhoska, Mayeesha Humaira, Mukesh Mani Tripathi, Samuel Maldonado
  *
  ***********************************************************************************************/
-import java.io.ByteArrayOutputStream;
 import java.net.*;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-//Implementated by Mukesh Mani Tripathi
 public class tripathiclient {
 
     public static void main(String[] args) {
@@ -29,29 +28,54 @@ public class tripathiclient {
         try (Scanner sc = new Scanner(System.in);
              DatagramSocket clientSocket = new DatagramSocket()) {
 
-            // STEP 1: Get user input for timeout and website 
+            // Prompt user for timeout and web server name
             System.out.println("Enter an integer timeout value T in milliseconds such as 100");
             int timeout = sc.nextInt();
-            sc.nextLine(); // clear newline from buffer
-            
+            sc.nextLine(); // clear newline
             System.out.println("Enter a webserver name WS such as www.ietf.org");
             String website = sc.nextLine().trim();
 
-            //= STEP 2: Build and send request message "T WS" to server
+            // Build request message "T WS"
             String requestMessage = timeout + " " + website;
-            byte[] sendData = requestMessage.getBytes(StandardCharsets.UTF_8);
-            
-            InetAddress serverAddress = InetAddress.getByName("localhost");
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
-                                                          serverAddress, SERVER_PORT);
-            clientSocket.send(sendPacket);
-            System.out.println("Request sent to server: " + requestMessage);
 
-            //  STEP 3: Set socket timeout 
+            // Step 1: Convert request to bytes
+            byte[] sendData = requestMessage.getBytes(StandardCharsets.UTF_8);
+
+            // Step 2: Send request to server (localhost:21200)
+            InetAddress serverAddress = InetAddress.getByName("localhost");
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, SERVER_PORT);
+            clientSocket.send(sendPacket);
+
+            // Step 3: Set socket timeout
             clientSocket.setSoTimeout(timeout);
 
-            //=========================IMPLEMENTATION by Mayeesha=========================
-        
+            // --- PSEUDOCODE SECTION ---
+
+            // 4. Receive initial packet containing N (total bytes)
+            //    byte[] sizeBuf = new byte[64]
+            //    DatagramPacket sizePacket = new DatagramPacket(sizeBuf, sizeBuf.length)
+            //    clientSocket.receive(sizePacket)
+            //    parse N = Integer.parseInt(new String(sizeBuf))
+
+            // 5. Allocate byte array 'content' of size N
+
+            // 6. Initialize counter: totalReceived = 0
+
+            // 7. While loop to receive webpage chunks until totalReceived == N:
+            //       try:
+            //           receive UDP packet
+            //           copy packet bytes into content buffer
+            //           increment totalReceived
+            //           print received data as string
+            //       catch timeout:
+            //           print "FAIL"
+            //           exit program
+
+            // 8. When all data received:
+            //       send "ACK" packet to server
+            //       print "All data received successfully."
+            
+         // ========================= PSEUDOCODE IMPLEMENTATION by Mayeesha=========================
             // (4) Receive initial packet containing N (total bytes) 
             byte[] sizeBuf = new byte[64]; // enough for ASCII length like "123456"
             DatagramPacket sizePacket = new DatagramPacket(sizeBuf, sizeBuf.length);
