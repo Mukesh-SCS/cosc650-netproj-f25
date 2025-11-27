@@ -29,14 +29,20 @@ The Checksum field provides basic error detection. It is computed over the ICMPv
 
 //please write these two fields in the same style as Part 1.
 
-(Anyone)
-Part 2 – #TODO Team
+**(Mayeesha)**
+Part 2 – ICMPv6 Additional Header Fields
 
-Fields:
+Field 4: Reserved
+Name: Reserved
+Actual value: 00000000
+Explanation:
+This 32-bit Reserved field is defined by the ICMPv6 Neighbor Solicitation format and must always be set to zero. It is kept for possible future extensions, so in normal operation it carries no meaningful information and receivers ignore it. Wireshark shows the value as 00000000, which confirms that the sender is following the Neighbor Discovery specification.
 
-Reserved
-
-Target Address
+Field 5: Target Address
+Name: Target Address
+Actual value: 2001:db8:2:0:4af:218b:f96d:fa63
+Explanation:
+The Target Address field contains the IPv6 address of the node whose link-layer (MAC) address the sender wants to learn. In this packet, the host is trying to discover information about 2001:db8:2:0:4af:218b:f96d:fa63 on the local link. Any node that owns this IPv6 address will respond with a Neighbor Advertisement, allowing the sender to update its neighbor cache and then send IPv6 packets directly to that node at the data-link layer.
 
 //please handle the option header fields.
 (Anyone)
